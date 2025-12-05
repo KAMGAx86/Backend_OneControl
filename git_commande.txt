@@ -1,0 +1,111 @@
+==================================================
+COMMANDES GIT ESSENTIELLES - AIDE-MÉMOIRE
+==================================================
+
+🌐 GESTION DES DÉPÔTS DISTANTS (REMOTE)
+--------------------------------------------------
+# Lister les dépôts distants configurés (et leurs URLs) :
+git remote -v
+
+# Ajouter un nouveau dépôt distant (nommé classiquement "origin") :
+git remote add origin https://github.com/utilisateur/depot.git
+
+# Changer l'URL d'un dépôt distant existant :
+git remote set-url origin https://nouvelle.url/du/depot.git
+
+# Supprimer la liaison à un dépôt distant :
+git remote remove origin
+
+📥 SYNCHRONISATION AVEC LES AUTRES (GitHub)
+--------------------------------------------------
+# Télécharge ET fusionne les changements distants (LA PLUS COURANTE) :
+git pull origin nom_de_ma_branche
+
+# Télécharge seulement les changements distants pour inspection :
+git fetch origin
+
+# Fusionne manuellement les changements téléchargés :
+git merge origin/nom_de_ma_branche
+
+# Envoie mes commits locaux vers le dépôt distant :
+git push origin nom_de_ma_branche
+
+📁 DÉMARRAGE & RÉCUPÉRATION
+--------------------------------------------------
+# Créer un nouveau dépôt local :
+git init
+
+# Copier (cloner) un dépôt distant existant :
+git clone https://github.com/utilisateur/depot.git
+
+📝 TRAVAILLER LOCALEMENT
+--------------------------------------------------
+# Voir l'état des fichiers (MODIFIÉ, À COMMITER, etc.) :
+git status
+
+# Ajouter un fichier spécifique à la zone de préparation :
+git add mon_fichier.py
+
+# Ajouter TOUS les fichiers modifiés/nouveaux :
+git add .
+
+# Créer un point de sauvegarde (commit) avec un message :
+git commit -m "Description claire de mes modifications"
+
+📜 CONSULTER L'HISTORIQUE
+--------------------------------------------------
+# Voir l'historique détaillé des commits :
+git log
+
+# Historique condensé (1 ligne par commit) :
+git log --oneline
+
+# Voir les différences entre vos fichiers et le dernier commit :
+git diff
+
+🌳 GESTION DES BRANCHES
+--------------------------------------------------
+# Lister les branches (l'étoile * montre la branche active) :
+git branch
+
+# Créer une nouvelle branche :
+git branch nom_de__branche
+
+# Changer de branche :
+git checkout nom_de__branche
+
+# Créer une branche ET basculer dessus directement :
+git checkout -b nouvelle_branche
+
+# Fusionner une autre branche dans la branche active :
+git merge nom_de__branche
+
+⚙️ CONFIGURATION
+--------------------------------------------------
+# Définir mon nom (à faire une fois) :
+git config --global user.name "Mon Nom"
+
+# Définir mon email (à faire une fois) :
+git config --global user.email "mon@email.com"
+
+# Afficher toute ma configuration :
+git config --global --list
+
+↩️ ANNULER / CORRIGER
+--------------------------------------------------
+# Annuler les modifications d'un fichier NON AJOUTÉ (git add) :
+git restore mon_fichier.py
+
+# Retirer un fichier de la zone de préparation (après git add) :
+git reset HEAD mon_fichier.py
+
+# Modifier le message ou le contenu du DERNIER commit :
+git commit --amend
+
+⚠️  ATTENTION : Commandes de réinitialisation (à utiliser avec précaution)
+
+# Annule le dernier commit, mais garde les modifications en "staged" :
+git reset --soft HEAD~1
+
+# (DANGEREUX) Annule le dernier commit et SUPPRIME les modifications :
+git reset --hard HEAD~1
