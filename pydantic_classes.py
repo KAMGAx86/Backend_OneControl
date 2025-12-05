@@ -46,6 +46,5 @@ class Token(BaseModel):
     
 
 class SimpleResetRequest(BaseModel):
-    email: str
     token: Optional[str] = None
     new_password: Optional[str] = None

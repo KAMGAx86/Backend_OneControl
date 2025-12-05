@@ -25,6 +25,7 @@ JWT_SECRET_KEY =  "f10f9e1b3f0a198271bd43a07f79eb1a7cc36b4fb90f594aeeca89a0f7ebe
 
 JWT_ALGO = "HS256"
 
+
 # HELPER FUNCTION FOR LOGIN
 
 #fonction de login qui permet de tester les infos utilisateur
@@ -45,7 +46,7 @@ def create_token(email: str,user_id: int,expire_delta: timedelta):
 
     return jwt.encode(encoded_data, JWT_SECRET_KEY, JWT_ALGO)
 
-async def get_current_player(token: Annotated[str, Depends(oauth2_bearer)]):
+async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
 
     try:
         payload = jwt.decode(
@@ -189,7 +190,7 @@ async def reset_password(db: db_dependancy,token: str = Body(), new_password: st
     
     db.commit()
     
-    raise HTTPException(
+    return HTTPException(
         status_code=status.HTTP_200_OK,
         detail="password changed successfully"
     )
