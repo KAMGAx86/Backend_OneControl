@@ -9,6 +9,7 @@ from  starlette import status
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm,OAuth2PasswordBearer #permet de creer un petit formulaire de login pour tester l'autentifucation
 from jose import jwt,JWTError # pour creer des cles de token
+from emails import envoyer_email
 
 router = APIRouter(
     tags=["auth_endpoint"],
@@ -102,4 +103,94 @@ async def login_player(form_data: Annotated[OAuth2PasswordRequestForm,Depends()]
 
     token = create_token(user_authenticated.email,user_authenticated.id,timedelta(minutes=30))
     return {"access_token":token,"token_type": "Bearer"}
+
+
+# HELPER FUNCTION FOR PASSWORD RESET
+
+def generate_simple_token():
+    """Genere un token simple avec le module secrets de python"""
+    import secrets
+    return ''.join(secrets.choice('0123456789') for _ in range(12))
+
+def is_token_valid(token_expiry):
+    """
+    Verifie si le token est encore valide en comparant la date d'expiration avec la date actuelle
+    """
+    from datetime import datetime, timezone
+    if not token_expiry:
+        return False
+    return datetime.now(timezone.utc) < token_expiry
+
+
+####################
+
+@router.post("/forgot-password")
+async def forgot_password(db: db_dependancy,email : str = Body()):
+    
+    user = db.query(User).filter(User.email == email).first()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="Aucun utilisateur avec cet email"
+        )
+        
+    token = generate_simple_token()
+    
+    #defiinir l'expiration 15 minutes
+    from datetime import datetime, timezone, timedelta
+    expiry = datetime.now(timezone.utc) + timedelta(minutes=15)
+    
+    # sauvegarder dans la table user
+    user.reset_token = token
+    user.token_expiry = expiry
+    db.commit()
+    
+    #envoie l'email
+    envoyer_email(email,"Réinitialisation de mot de passe",f"Votre code de réinitialisation est : {token}")
+    
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="Un code de réinitialisation a été envoyé"
+    )
+    
+@router.post("/reset-password")
+async def reset_password(db: db_dependancy,token: str = Body(), new_password: str = Body(), ):
+    """
+    Réinitialisation avec token
+    - L'utilisateur donne le token reçu
+    - Et son nouveau mot de passe
+    """
+    
+    #Chercher l'utilisateur avec ce token
+    user = db.query(User).filter(
+        User.reset_token == token
+    ).first()
+    
+    #Vérifier s'il existe et si le token est valide
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="user not found"
+        )
+    
+    if not is_token_valid(user.token_expiry):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="token expired"
+        )
+    
+    #Mettre à jour le mot de passe
+    user.hashed_password = bcrypt_context.hash(new_password)
+    
+    #Invalider le token
+    user.reset_token = None
+    user.token_expiry = None
+    
+    db.commit()
+    
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="password changed successfully"
+    )
     

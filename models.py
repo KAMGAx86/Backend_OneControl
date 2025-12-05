@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
+
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean,DateTime
 from database import Base
 
 
@@ -17,5 +18,7 @@ class User(Base):
     employees_number = Column(Integer)
     aproximative_ca = Column(String)
     secteur_activite = Column(String)
+    reset_token = Column(String(100), nullable=True)  # Token temporaire
+    token_expiry = Column(DateTime, nullable=True)
     code = Column(String)
     

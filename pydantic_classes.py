@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel,Field, constr
 
 
@@ -42,3 +43,9 @@ class UserLoginValidation(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    
+
+class SimpleResetRequest(BaseModel):
+    email: str
+    token: Optional[str] = None
+    new_password: Optional[str] = None
