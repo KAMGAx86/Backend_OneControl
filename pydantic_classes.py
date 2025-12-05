@@ -31,3 +31,14 @@ class UserValidation(BaseModel):
             } 
         }
     }
+    
+
+class UserLoginValidation(BaseModel):
+    email : str = Field(description="Email de l'utilisateur")
+    password : str = Field(description="mot de passe de l'utilisateur",min_length=8)
+
+
+# classe qui represente un modele de retour de toknen de connexion
+class Token(BaseModel):
+    access_token: str
+    token_type: str
