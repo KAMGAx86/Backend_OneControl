@@ -425,4 +425,4 @@ def analyse_comparative_complete(donnees_p1, donnees_p2):
     
     return resultats
 
-result = analyse_comparative_complete(donnees_p1,donnees_p2)
+comprative_ca_r = analyse_comparative_complete(donnees_p1,donnees_p2)
