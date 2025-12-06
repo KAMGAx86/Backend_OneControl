@@ -26,7 +26,7 @@ for file in os.listdir():
         print(f"  - {file}")
 
 # Utilisez le chemin absolu
-chemin_modele = os.path.join(os.path.dirname(__file__), "model_rentabilite.joblib")
+chemin_modele = os.path.join(os.path.dirname(__file__), "modele_rentabilite.joblib")
 
 # Définir les modèles Pydantic dans le même fichier
 class PaybackPeriodRequest(BaseModel):
