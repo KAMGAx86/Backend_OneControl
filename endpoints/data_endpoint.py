@@ -4,18 +4,29 @@ from database import db_dependancy
 from sqlalchemy import text
 from starlette import status
 from endpoints.simulateur_prix import SimulateurPrixRequest, simulation_complete
-from endpoints.simulation_embauche import SimulateurEmbaucheRequest, calculer_cout_embauche_complet
-from models import User
-from comparative_ca import ComparativeCARequest, analyse_comparative_complete, comprative_ca_r
+from .simulation_embauche import SimulateurEmbaucheRequest, calculer_cout_embauche_complet
+from .comparative_ca import ComparativeCARequest, analyse_comparative_complete
 import joblib
 import numpy as np
 from pydantic import BaseModel, Field
-from simulateur_lancement import SimulateurLancementRequest, simulateur
+from .simulateur_lancement import SimulateurLancementRequest
 
 router = APIRouter(
     tags=["data_endpoint"],
     prefix="/data"
 )
+
+# Solution 1: Vérifiez le chemin absolu
+import os
+
+# Liste des fichiers dans le répertoire
+print("Fichiers présents:")
+for file in os.listdir():
+    if '.joblib' in file or '.pkl' in file:
+        print(f"  - {file}")
+
+# Utilisez le chemin absolu
+chemin_modele = os.path.join(os.path.dirname(__file__), "model_rentabilite.joblib")
 
 # Définir les modèles Pydantic dans le même fichier
 class PaybackPeriodRequest(BaseModel):
@@ -103,7 +114,7 @@ class PaybackPeriodResponse(BaseModel):
 
 # Charger le modèle une seule fois au démarrage
 try:
-    model = joblib.load("model_rentabilite.joblib")
+    model = joblib.load(chemin_modele)
 except Exception as e:
     print(f"Erreur lors du chargement du modèle : {e}")
     model = None
